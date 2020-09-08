@@ -24,6 +24,11 @@ function Login() {
 
     }
 
+    function userAlreadyExists(){
+
+    }
+
+
     function incorrectPassword(){
 
     }
@@ -62,8 +67,8 @@ function Login() {
         });
     }
     function addAccount (){
-        if(!userExists(username)){
-            userDoesNotExist();
+        if(userExists(username)){
+            userAlreadyExists();
         }
         else {
             const addUserUrl = `${headUrl}/account/add`;
@@ -84,7 +89,7 @@ function Login() {
 
     return (
         goToHomePage === true ?
-            <Redirect to="/home"/>
+            <Redirect to={`/${username}/home`}/>
         :
         <div className="App">
                 <header className="App-header">
@@ -101,11 +106,9 @@ function Login() {
                             <Form.Label>Password</Form.Label>
                             <Form.Control type="password" placeholder="Password" onChange={(e) => {setPassword(e.target.value)}}/>
                         </Form.Group>
-                        <Form.Group controlId="formBasicCheckbox">
-                            <Form.Check type="checkbox" label="Check me out" />
-                        </Form.Group>
+                        <br/>
                         <div css={{display: "flex", justifyContent:"space-evenly"}}>
-                            <Button variant="primary" onClick={addAccount}>
+                            <Button variant="primary" type="submit" onClick={addAccount}>
                                 Create Account
                             </Button>
                             <Button variant="primary" onClick={attemptLogin}>
