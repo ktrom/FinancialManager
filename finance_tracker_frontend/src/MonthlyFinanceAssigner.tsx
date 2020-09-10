@@ -5,14 +5,14 @@ import ReactDOM from 'react-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 // fake data generator
-const getItems = (count : number, offset = 0) =>
+const getItems : {id: string, content:string} = (count : number, offset = 0) =>
     Array.from({ length: count }, (v, k) => k).map(k => ({
         id: `item-${k + offset}`,
         content: `item ${k + offset}`
     }));
 
 // a little function to help us with reordering the result
-const reorder = (list, startIndex, endIndex) => {
+const reorder : {id:string, content:string} = (list : any, startIndex : number, endIndex : number) => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
     result.splice(endIndex, 0, removed);
@@ -30,7 +30,7 @@ const move = (source : any, destination : any, droppableSource : DraggableLocati
 
     destClone.splice(droppableDestination.index, 0, removed);
 
-    const result = {};
+    const result : any = {};
     result[droppableSource.droppableId] = sourceClone;
     result[droppableDestination.droppableId] = destClone;
 
@@ -39,7 +39,7 @@ const move = (source : any, destination : any, droppableSource : DraggableLocati
 
 const grid = 8;
 
-const getItemStyle = (isDragging, draggableStyle) => ({
+const getItemStyle = (isDragging : boolean, draggableStyle : any) => ({
     // some basic styles to make the items look a bit nicer
     userSelect: 'none',
     padding: grid * 2,
@@ -64,7 +64,7 @@ function MonthlyFinanceAssigner () {
     //     selected: getItems(5, 10)
     // };
 
-    const [state, setState] = React.useState({items: getItems(10), selected: getItems(5, 10)});
+    const [state, setState] = React.useState<{items: {id: string, content: string}, selected: {id: string, content:string}}>({items: getItems(10), selected: getItems(5, 10)});
     /**
      * A semi-generic way to handle multiple lists. Matches
      * the IDs of the droppable container to the names of the
@@ -86,19 +86,18 @@ function MonthlyFinanceAssigner () {
         }
 
         if (source.droppableId === destination.droppableId) {
-            const items = reorder(
-                this.getList(source.droppableId),
+            const items : {id: string, content:string} = reorder(
+                getList(source.droppableId),
                 source.index,
                 destination.index
             );
 
-            let state = { items };
-
             if (source.droppableId === 'droppable2') {
-                setState({ selected: items });
+               setState(  {...state, selected: items })
             }
-
-            this.setState(state);
+            else{
+                setState({...state, items: items})
+            }
         } else {
             const result = move(
                 getList(source.droppableId),
@@ -107,7 +106,7 @@ function MonthlyFinanceAssigner () {
                 destination
             );
 
-            this.setState({
+            setState({
                 items: result.droppable,
                 selected: result.droppable2
             });
@@ -123,7 +122,7 @@ function MonthlyFinanceAssigner () {
                         <div
                             ref={provided.innerRef}
                             style={getListStyle(snapshot.isDraggingOver)}>
-                            {this.state.items.map((item, index) => (
+                            {state.items.map((item : {id : string, content : string}, index : number) => (
                                 <Draggable
                                     key={item.id}
                                     draggableId={item.id}
@@ -151,7 +150,7 @@ function MonthlyFinanceAssigner () {
                         <div
                             ref={provided.innerRef}
                             style={getListStyle(snapshot.isDraggingOver)}>
-                            {this.state.selected.map((item, index) => (
+                            {state.selected.map((item : {id:string, content:string}, index : number) => (
                                 <Draggable
                                     key={item.id}
                                     draggableId={item.id}
