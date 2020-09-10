@@ -1,13 +1,15 @@
-import {Button, Form} from "react-bootstrap";
-import {jsx} from "@emotion/core";
 import React from 'react';
 import {useParams} from "react-router";
 import styled from "@emotion/styled";
+import SidebarContent from "./SidebarContent";
+import FinancesMainPage from "./FinancesMainPage";
+import {MainContent} from "./Enums/MainContent";
 
 const Wrapper = styled.body({
     display: "grid",
     gridTemplateAreas: "'header header' 'aside main' 'footer footer'",
     gridTemplateColumns: "1fr 6fr",
+    backgroundColor: "darkgray",
 });
 
 const Header = styled.div({
@@ -16,13 +18,12 @@ const Header = styled.div({
 });
     const Main = styled.div({
         gridArea:"main",
-        backgroundColor:"lightgreen",
+        backgroundColor:"grey",
 
     });
 
     const Aside = styled.div({
         gridArea:"aside",
-        backgroundColor:"yellow",
     });
 
 const Footer = styled.div({
@@ -33,11 +34,12 @@ const Footer = styled.div({
 function Home(){
     // @ts-ignore
     const { username } = useParams();
+    const [content, setContent] = React.useState<MainContent>(MainContent.Main);
 return (
     <Wrapper className="wrapper">
         <Header className="header">header</Header>
-        <Main className="main">main</Main>
-        <Aside className="aside"><div>wassup dog</div><div>higgity diggity</div></Aside>
+        <Main className="main"><FinancesMainPage content={content}/></Main>
+        <Aside className="aside"><SidebarContent setContent={setContent}/></Aside>
         <Footer className="footer">footer</Footer>
     </Wrapper>
 );

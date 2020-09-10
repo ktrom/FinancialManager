@@ -49,7 +49,6 @@ function Login() {
         if(!userExists(username)){
             userDoesNotExist();
         }
-        let correctPassword = false;
         const verifyUserUrl = `${headUrl}/account/verifyAccount`;
         axios.get(`${verifyUserUrl}?username=${username}&password=${password}`)
             .then(function (response) {
