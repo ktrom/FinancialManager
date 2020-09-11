@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { jsx, css } from '@emotion/core'
 import React from 'react';
 import {useParams} from "react-router";
 import styled from "@emotion/styled";
@@ -32,15 +34,15 @@ const Footer = styled.div({
 })
 
 function Home(){
-    // @ts-ignore
-    const { username } = useParams();
+
+    // const { username } = useParams();
     const [content, setContent] = React.useState<MainContent>(MainContent.Main);
 return (
     <Wrapper className="wrapper">
-        <Header className="header">header</Header>
-        <Main className="main"><FinancesMainPage content={content}/></Main>
+        <Header className="header" css={{ height: "10vh"}}>header</Header>
+        <Main className="main" css={{height: "80vh"}}><FinancesMainPage content={content}/></Main>
         <Aside className="aside"><SidebarContent setContent={setContent}/></Aside>
-        <Footer className="footer">footer</Footer>
+        <Footer className="footer" css={{height: "10vh"}}>footer</Footer>
     </Wrapper>
 );
 

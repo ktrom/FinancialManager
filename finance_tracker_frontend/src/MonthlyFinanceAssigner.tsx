@@ -1,13 +1,36 @@
+/** @jsx jsx */
+import { jsx, css } from '@emotion/core'
 import {MainContent} from "./Enums/MainContent";
 import React from "react";
 import { DraggableLocation, DropResult} from "react-beautiful-dnd";
 import ReactDOM from 'react-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-
+import styled from "@emotion/styled";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 interface Item{
         id: string,
         content: string,
 }
+
+const Header = styled.div({
+    backgroundColor: 'lightgrey',
+    padding: 10,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+});
+
+const DroppableContainer = styled.div({
+    height: "75vh",
+    display: "flex",
+    flexDirection:"column",
+    margin: 20,
+});
+
+const DroppableZone = styled.div({
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+});
 
 function getItems(count: number, offset = 0) : Item[] {
         const items : Item[] = Array.from({ length: count }, (v, k) => k).map(k => ({
@@ -52,8 +75,9 @@ const getItemStyle = ( isDragging : boolean, draggableStyle : any) => ({
     padding: grid * 2,
     margin: `0 0 ${grid}px 0`,
 
+    borderRadius: 10,
     // change background colour if dragging
-    background: isDragging ? 'lightgreen' : 'grey',
+    background: isDragging ? 'darkgrey' : 'grey',
 
     // styles we need to apply on draggables
     ...draggableStyle
@@ -62,7 +86,8 @@ const getItemStyle = ( isDragging : boolean, draggableStyle : any) => ({
 const getListStyle = (isDraggingOver : boolean) => ({
     background: isDraggingOver ? 'lightblue' : 'lightgrey',
     padding: grid,
-    width: 250
+    width: "25vw",
+    overflow: "auto",
 });
 
 function MonthlyFinanceAssigner () {
@@ -121,9 +146,13 @@ function MonthlyFinanceAssigner () {
     // But in this example everything is just done in one place for simplicity
         return (
             <DragDropContext onDragEnd={onDragEnd}>
+                <div css={{display: "flex", placeContent: "space-evenly"}}>
+
                 <Droppable droppableId="droppable">
                     {(provided, snapshot) => (
-                        <div
+                        <DroppableContainer>
+                            <Header css={{display:"flex", placeContent:"space-between"}}><div>unassigned items</div> <FontAwesomeIcon icon={faPlus} css={{marginTop: 5, marginRight: 15}}/></Header>
+                        <DroppableZone
                             ref={provided.innerRef}
                             style={getListStyle(snapshot.isDraggingOver)}>
                             {state.items.map((item : Item, index : number) => (
@@ -146,12 +175,15 @@ function MonthlyFinanceAssigner () {
                                 </Draggable>
                             ))}
                             {provided.placeholder}
-                        </div>
+                        </DroppableZone>
+                        </DroppableContainer>
                     )}
                 </Droppable>
                 <Droppable droppableId="droppable2">
                     {(provided, snapshot) => (
-                        <div
+                        <DroppableContainer>
+                            <Header>expense items</Header>
+                            <DroppableZone
                             ref={provided.innerRef}
                             style={getListStyle(snapshot.isDraggingOver)}>
                             {state.selected.map((item : Item, index : number) => (
@@ -174,9 +206,11 @@ function MonthlyFinanceAssigner () {
                                 </Draggable>
                             ))}
                             {provided.placeholder}
-                        </div>
+                        </DroppableZone>
+                        </DroppableContainer>
                     )}
                 </Droppable>
+                    </div>
             </DragDropContext>
         );
 }
