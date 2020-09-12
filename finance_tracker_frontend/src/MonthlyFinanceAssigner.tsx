@@ -20,12 +20,16 @@ const Header = styled.div({
     borderTopRightRadius: 10,
 });
 
-const DroppableContainer = styled.div({
-    height: "75vh",
+const DroppableContainer = styled.div((props: {isDraggingOver: boolean}) => ({
+    maxHeight: "75vh",
+    height: "min-content",
     display: "flex",
     flexDirection:"column",
     margin: 20,
-});
+    boxShadow: "7px 7px 5px black",
+    backgroundColor: props.isDraggingOver ? "lightblue" : "lightgray",
+    borderRadius: 10,
+}));
 
 const DroppableZone = styled.div({
     borderBottomLeftRadius: 10,
@@ -88,6 +92,7 @@ const getListStyle = (isDraggingOver : boolean) => ({
     padding: grid,
     width: "25vw",
     overflow: "auto",
+    margin: 10,
 });
 
 function MonthlyFinanceAssigner () {
@@ -150,7 +155,7 @@ function MonthlyFinanceAssigner () {
 
                 <Droppable droppableId="droppable">
                     {(provided, snapshot) => (
-                        <DroppableContainer>
+                        <DroppableContainer isDraggingOver={snapshot.isDraggingOver}>
                             <Header css={{display:"flex", placeContent:"space-between"}}><div>unassigned items</div> <FontAwesomeIcon icon={faPlus} css={{marginTop: 5, marginRight: 15}}/></Header>
                         <DroppableZone
                             ref={provided.innerRef}
@@ -181,7 +186,7 @@ function MonthlyFinanceAssigner () {
                 </Droppable>
                 <Droppable droppableId="droppable2">
                     {(provided, snapshot) => (
-                        <DroppableContainer>
+                        <DroppableContainer isDraggingOver={snapshot.isDraggingOver}>
                             <Header>expense items</Header>
                             <DroppableZone
                             ref={provided.innerRef}
