@@ -8,6 +8,8 @@ import styled from "@emotion/styled";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Button, Form, Modal } from "react-bootstrap";
+import { connect } from "react-redux";
+import App from "./App";
 
 interface Item {
   id: string;
@@ -194,12 +196,15 @@ function MonthlyFinanceAssigner() {
                 placeholder="Enter name"
                 onChange={(e) => {
                   e.preventDefault();
-                  setNewItem(
-                    (prevState: { item_name: string; item_value: number }) => ({
-                      item_name: e.target.value,
-                      item_value: prevState.item_value,
-                    })
-                  );
+                  props.dispatch({
+                    type: "UPDATE_NEW_ITEM_NAME",
+                    payload: e.target.value,
+                  });
+                  // setNewItem(
+                  //   (prevState: { item_name: string; item_value: number }) => ({
+                  //     item_name: e.target.value,
+                  //     item_value: prevState.item_value,
+                  //   })
                 }}
               />
             </Form.Group>
@@ -330,4 +335,4 @@ function MonthlyFinanceAssigner() {
   );
 }
 
-export default MonthlyFinanceAssigner;
+export default connect()(MonthlyFinanceAssigner);

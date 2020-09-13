@@ -7,22 +7,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 // const express = require('express');
 // const cors = require('cors');
 // const app = express();
-import { createStore } from "redux";
-import { Provider } from "react-redux";
-const countReducer = function (state = 0, action: { type: any }) {
-  switch (action.type) {
-    case "INCREMENT":
-      return state + 1;
-    case "DECREMENT":
-      return state - 1;
-    default:
-      return state;
-  }
-};
+import defaultStore from "./store/Store";
+import { connect, Provider } from "react-redux";
+import MonthlyFinanceAssigner from "./MonthlyFinanceAssigner";
 
-let store = createStore(countReducer);
 ReactDOM.render(
-  <Provider store={store}>
+  <Provider store={defaultStore}>
     <App />
   </Provider>,
   document.getElementById("root")
