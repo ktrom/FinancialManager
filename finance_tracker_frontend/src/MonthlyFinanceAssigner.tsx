@@ -8,8 +8,8 @@ import styled from "@emotion/styled";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Button, Form, Modal } from "react-bootstrap";
-import { connect } from "react-redux";
-import App from "./App";
+import { connect, useDispatch } from "react-redux";
+import { addItemAction } from "./store/items/actions";
 
 interface Item {
   id: string;
@@ -176,6 +176,7 @@ function MonthlyFinanceAssigner() {
   };
 
   function MyVerticallyCenteredModal(props: any) {
+    // const dispatch = useDispatch();
     return (
       <Modal
         {...props}
@@ -192,37 +193,12 @@ function MonthlyFinanceAssigner() {
           <Form>
             <Form.Group>
               <Form.Label>Item Name</Form.Label>
-              <Form.Control
-                placeholder="Enter name"
-                onChange={(e) => {
-                  e.preventDefault();
-                  props.dispatch({
-                    type: "UPDATE_NEW_ITEM_NAME",
-                    payload: e.target.value,
-                  });
-                  // setNewItem(
-                  //   (prevState: { item_name: string; item_value: number }) => ({
-                  //     item_name: e.target.value,
-                  //     item_value: prevState.item_value,
-                  //   })
-                }}
-              />
+              <Form.Control placeholder="Enter name" onChange={(e) => {}} />
             </Form.Group>
 
             <Form.Group controlId="formBasicPassword">
               <Form.Label>Item Value</Form.Label>
-              <Form.Control
-                placeholder="Enter value"
-                onChange={(e) => {
-                  e.preventDefault();
-                  setNewItem(
-                    (prevState: { item_name: string; item_value: number }) => ({
-                      item_name: prevState.item_name,
-                      item_value: parseFloat(e.target.value),
-                    })
-                  );
-                }}
-              />
+              <Form.Control placeholder="Enter value" />
             </Form.Group>
             <br />
             <div css={{ display: "flex", justifyContent: "space-evenly" }}>
@@ -335,4 +311,23 @@ function MonthlyFinanceAssigner() {
   );
 }
 
-export default connect()(MonthlyFinanceAssigner);
+const mapStateToProps = (state: { add_item: any; add_value: any }) => {
+  return {
+    addItem: state.add_item,
+    addValue: state.add_value,
+  };
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    onNameChange: (name: string) => {
+      dispatch(addItemAction(name));
+    },
+  };
+};
+
+const SuperMonthlyFinanceAssigner = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MonthlyFinanceAssigner);
+export default SuperMonthlyFinanceAssigner;

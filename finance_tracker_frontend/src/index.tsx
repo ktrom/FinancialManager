@@ -4,15 +4,21 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.min.css";
-// const express = require('express');
-// const cors = require('cors');
-// const app = express();
-import defaultStore from "./store/Store";
+
 import { connect, Provider } from "react-redux";
-import MonthlyFinanceAssigner from "./MonthlyFinanceAssigner";
+import { createStore } from "redux";
+import itemApp from "./store/items/reducers";
+import { addItemAction } from "./store/items/actions";
+
+const store = createStore(itemApp);
+console.log(store.getState());
+const unsubscribe = store.subscribe(() => console.log(store.getState()));
+store.dispatch(addItemAction("kyle"));
+store.dispatch(addItemAction("tromster"));
+unsubscribe();
 
 ReactDOM.render(
-  <Provider store={defaultStore}>
+  <Provider store={store}>
     <App />
   </Provider>,
   document.getElementById("root")
