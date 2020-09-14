@@ -1,9 +1,10 @@
-import { ADD_ITEM, ADD_VALUE } from "./actions";
+import { ADD_ITEM, ADD_VALUE, TOGGLE_MODAL } from "./actions";
 import { combineReducers } from "redux";
 
 const initialState = {
   add_item: "",
   add_value: "",
+  isAddItemModalShowing: false,
 };
 
 function items(state = [], action: any) {
@@ -14,20 +15,17 @@ function items(state = [], action: any) {
       return Object.assign({}, state, {
         add_item: action.name,
       });
+      break;
     case ADD_VALUE:
       return Object.assign({}, state, {
         add_value: action.value,
       });
-    // case ADD_ITEM_TO_LIST:
-    //     return Object.assign({}, state, {
-    //         listItems: [
-    //             ...state.listItems,
-    //             {
-    //                 name: action.name,
-    //                 value: action.value,
-    //             }
-    //         ]
-    //     })
+      break;
+    case TOGGLE_MODAL:
+      return Object.assign({}, state, {
+        isAddItemModalShowing: action.open,
+      });
+      break;
 
     // look up React Reducers page in order to do patterns (reducer composition)
     // important for managing different parts of the global state
