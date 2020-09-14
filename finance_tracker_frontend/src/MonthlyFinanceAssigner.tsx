@@ -8,8 +8,8 @@ import styled from "@emotion/styled";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Button, Form, Modal } from "react-bootstrap";
-import { connect, useDispatch } from "react-redux";
-import { addItemAction } from "./store/items/actions";
+import { connect, ConnectedProps, useDispatch } from "react-redux";
+import { addItemAction, addValueAction } from "./store/items/actions";
 
 interface Item {
   id: string;
@@ -107,8 +107,9 @@ const getListStyle = (isDraggingOver: boolean) => ({
   margin: 10,
 });
 
-function MonthlyFinanceAssigner() {
+function MonthlyFinanceAssigner(props: Props) {
   const [modalShow, setModalShow] = React.useState<boolean>(false);
+  const dispatch = useDispatch();
 
   const [newItem, setNewItem] = React.useState<{
     item_name: string;
@@ -175,11 +176,10 @@ function MonthlyFinanceAssigner() {
     });
   };
 
-  function MyVerticallyCenteredModal(props: any) {
-    // const dispatch = useDispatch();
+  function MyVerticallyCenteredModal(modalProps: any) {
     return (
       <Modal
-        {...props}
+        {...modalProps}
         size="lg"
         aria-labelledby="contained-modal-title-vcenter"
         centered
@@ -193,12 +193,25 @@ function MonthlyFinanceAssigner() {
           <Form>
             <Form.Group>
               <Form.Label>Item Name</Form.Label>
-              <Form.Control placeholder="Enter name" onChange={(e) => {}} />
+              <Form.Control
+                placeholder="Enter name"
+                onChange={(e) => {
+                  console.log(props.addItem);
+                  props.onNameChange("kyle");
+                  console.log(props.addItem);
+                }}
+              />
             </Form.Group>
 
             <Form.Group controlId="formBasicPassword">
               <Form.Label>Item Value</Form.Label>
-              <Form.Control placeholder="Enter value" />
+              <Form.Control
+                placeholder="Enter value"
+                onChange={(e) => {
+                  props.onValueChange(e.target.value);
+                  console.log(props.addValue);
+                }}
+              />
             </Form.Group>
             <br />
             <div css={{ display: "flex", justifyContent: "space-evenly" }}>
@@ -209,7 +222,7 @@ function MonthlyFinanceAssigner() {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={props.onHide}>Close/Don't Add Item</Button>
+          <Button onClick={modalProps.onHide}>Close/Don't Add Item</Button>
         </Modal.Footer>
       </Modal>
     );
@@ -318,16 +331,19 @@ const mapStateToProps = (state: { add_item: any; add_value: any }) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    onNameChange: (name: string) => {
-      dispatch(addItemAction(name));
-    },
-  };
+const mapDispatchToProps = {
+  onNameChange: (name: string) => {
+    addItemAction(name);
+  },
+  onValueChange: (value: string) => {
+    addValueAction(parseFloat(value));
+  },
 };
 
-const SuperMonthlyFinanceAssigner = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(MonthlyFinanceAssigner);
-export default SuperMonthlyFinanceAssigner;
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+type Props = PropsFromRedux & {};
+
+export default connector(MonthlyFinanceAssigner);
