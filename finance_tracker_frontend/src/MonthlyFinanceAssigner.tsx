@@ -174,19 +174,18 @@ function MonthlyFinanceAssigner(props: Props) {
     }
   };
 
-  function addItem(name: string, value: number) {
-    const u = state.unassigned;
-    u.push({
-      id: name + value,
-      name: name,
-      value: value,
-      assigned: false,
+  const addItem = (name: string, value: number) => {
+    setState(function (prevState) {
+      const items = prevState.unassigned;
+      items.push({
+        assigned: false,
+        id: name + value,
+        name: name,
+        value: value,
+      });
+      return { unassigned: items, assigned: prevState.assigned };
     });
-    setState({
-      ...state,
-      unassigned: u,
-    });
-  }
+  };
 
   // Normally you would want to split things out into separate components.
   // But in this example everything is just done in one place for simplicity
