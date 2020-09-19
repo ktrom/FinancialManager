@@ -14,6 +14,7 @@ import {
   addValueAction,
   toggleAddItemModal,
 } from "./store/items/actions";
+import AddItemModal from "./modals/AddItemModal";
 
 interface Item {
   id: string;
@@ -112,14 +113,14 @@ const getListStyle = (isDraggingOver: boolean) => ({
 });
 
 function MonthlyFinanceAssigner(props: Props) {
-  function setModalShow(open: boolean) {
-    props.toggleModal(open);
-  }
+  const [showModal, setShowModal] = React.useState<boolean>(false);
 
-  const [newItem, setNewItem] = React.useState<{
-    item_name: string;
-    item_value: number;
-  }>({ item_name: "", item_value: 0 });
+  // const [newItem, setNewItem] = React.useState<{
+  //   item_name: string;
+  //   item_value: number;
+  // }>({ item_name: "", item_value: 0 });
+  //
+
   const [state, setState] = React.useState<{
     unassigned: Item[];
     assigned: Item[];
@@ -173,61 +174,18 @@ function MonthlyFinanceAssigner(props: Props) {
     }
   };
 
-  const addItem = () => {
-    setState(function (prevState) {
-      const items = prevState.unassigned;
-      items.push({ assigned: false, id: "3", name: "gg", value: 90 });
-      return { unassigned: items, assigned: prevState.assigned };
+  function addItem(name: string, value: number) {
+    const u = state.unassigned;
+    u.push({
+      id: name + value,
+      name: name,
+      value: value,
+      assigned: false,
     });
-  };
-
-  function MyVerticallyCenteredModal(modalProps: any) {
-    return (
-      <Modal
-        {...modalProps}
-        size="lg"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">
-            Modal heading
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group>
-              <Form.Label>Item Name</Form.Label>
-              <Form.Control
-                placeholder="Enter name"
-                onChange={(e) => {
-                  props.onNameChange(e.target.value);
-                }}
-              />
-            </Form.Group>
-
-            <Form.Group controlId="formBasicPassword">
-              <Form.Label>Item Value</Form.Label>
-              <Form.Control
-                placeholder="Enter value"
-                onChange={(e) => {
-                  props.onValueChange(parseFloat(e.target.value));
-                }}
-              />
-            </Form.Group>
-            <br />
-            <div css={{ display: "flex", justifyContent: "space-evenly" }}>
-              <Button variant="primary" type="submit " onClick={addItem}>
-                Add Item
-              </Button>
-            </div>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={modalProps.onHide}>Close/Don't Add Item</Button>
-        </Modal.Footer>
-      </Modal>
-    );
+    setState({
+      ...state,
+      unassigned: u,
+    });
   }
 
   // Normally you would want to split things out into separate components.
@@ -235,9 +193,10 @@ function MonthlyFinanceAssigner(props: Props) {
   return (
     <React.Fragment>
       <div>
-        <MyVerticallyCenteredModal
-          show={props.showModal}
-          onHide={() => setModalShow(false)}
+        <AddItemModal
+          addItem={addItem}
+          setShowModal={() => setShowModal(false)}
+          showModal={showModal}
         />
       </div>
       <DragDropContext onDragEnd={onDragEnd}>
@@ -249,7 +208,7 @@ function MonthlyFinanceAssigner(props: Props) {
                   css={{ display: "flex", placeContent: "space-between" }}
                 >
                   <div>unassigned items</div>
-                  <div onClick={() => setModalShow(true)}>
+                  <div onClick={() => setShowModal(true)}>
                     <FontAwesomeIcon
                       icon={faPlus}
                       css={{ marginTop: 5, marginRight: 15 }}
@@ -326,22 +285,24 @@ function MonthlyFinanceAssigner(props: Props) {
   );
 }
 
-const mapStateToProps = (state: {
-  items: {
-    add_item: string;
-    add_value: number;
-    isAddItemModalShowing: boolean;
-  };
-}) => ({
-  addItem: state.items.add_item,
-  addValue: state.items.add_value,
-  showModal: state.items.isAddItemModalShowing,
-});
+const mapStateToProps = () =>
+  //         state: {
+  //   items: {
+  //     add_item: string;
+  //     add_value: number;
+  //     isAddItemModalShowing: boolean;
+  //   };
+  // }
+  ({
+    // addItem: state.items.add_item,
+    // addValue: state.items.add_value,
+    // showModal: state.items.isAddItemModalShowing,
+  });
 
 const mapDispatchToProps = () => ({
-  onNameChange: (name: string) => addItemAction(name),
-  onValueChange: (value: number) => addValueAction(value),
-  toggleModal: (open: boolean) => toggleAddItemModal(open),
+  // onNameChange: (name: string) => addItemAction(name),
+  // onValueChange: (value: number) => addValueAction(value),
+  // toggleModal: (open: boolean) => toggleAddItemModal(open),
 });
 
 const connector = connect(mapStateToProps, mapDispatchToProps());
