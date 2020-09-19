@@ -8,8 +8,12 @@ import styled from "@emotion/styled";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Button, Form, Modal } from "react-bootstrap";
-import { connect, ConnectedProps, useDispatch } from "react-redux";
-import { addItemAction, addValueAction } from "./store/items/actions";
+import { connect, ConnectedProps, useDispatch, useStore } from "react-redux";
+import {
+  addItemAction,
+  addValueAction,
+  toggleAddItemModal,
+} from "./store/items/actions";
 
 interface Item {
   id: string;
@@ -108,8 +112,9 @@ const getListStyle = (isDraggingOver: boolean) => ({
 });
 
 function MonthlyFinanceAssigner(props: Props) {
-  const [modalShow, setModalShow] = React.useState<boolean>(false);
-  const dispatch = useDispatch();
+  function setModalShow(open: boolean) {
+    props.toggleModal(open);
+  }
 
   const [newItem, setNewItem] = React.useState<{
     item_name: string;
@@ -196,9 +201,7 @@ function MonthlyFinanceAssigner(props: Props) {
               <Form.Control
                 placeholder="Enter name"
                 onChange={(e) => {
-                  console.log(props.addItem);
-                  props.onNameChange("kyle");
-                  console.log(props.addItem);
+                  props.onNameChange(e.target.value);
                 }}
               />
             </Form.Group>
@@ -208,8 +211,7 @@ function MonthlyFinanceAssigner(props: Props) {
               <Form.Control
                 placeholder="Enter value"
                 onChange={(e) => {
-                  props.onValueChange(e.target.value);
-                  console.log(props.addValue);
+                  props.onValueChange(parseFloat(e.target.value));
                 }}
               />
             </Form.Group>
@@ -234,7 +236,7 @@ function MonthlyFinanceAssigner(props: Props) {
     <React.Fragment>
       <div>
         <MyVerticallyCenteredModal
-          show={modalShow}
+          show={props.showModal}
           onHide={() => setModalShow(false)}
         />
       </div>
@@ -324,23 +326,25 @@ function MonthlyFinanceAssigner(props: Props) {
   );
 }
 
-const mapStateToProps = (state: { add_item: any; add_value: any }) => {
-  return {
-    addItem: state.add_item,
-    addValue: state.add_value,
+const mapStateToProps = (state: {
+  items: {
+    add_item: string;
+    add_value: number;
+    isAddItemModalShowing: boolean;
   };
-};
+}) => ({
+  addItem: state.items.add_item,
+  addValue: state.items.add_value,
+  showModal: state.items.isAddItemModalShowing,
+});
 
-const mapDispatchToProps = {
-  onNameChange: (name: string) => {
-    addItemAction(name);
-  },
-  onValueChange: (value: string) => {
-    addValueAction(parseFloat(value));
-  },
-};
+const mapDispatchToProps = () => ({
+  onNameChange: (name: string) => addItemAction(name),
+  onValueChange: (value: number) => addValueAction(value),
+  toggleModal: (open: boolean) => toggleAddItemModal(open),
+});
 
-const connector = connect(mapStateToProps, mapDispatchToProps);
+const connector = connect(mapStateToProps, mapDispatchToProps());
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
