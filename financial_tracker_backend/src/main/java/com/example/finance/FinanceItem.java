@@ -12,6 +12,7 @@ public class FinanceItem {
     private long id;
     private final String name;
     private final double value;
+    private boolean assigned;
 
     @ManyToOne
     @JoinColumn(name="finance_item_id", nullable = false)
@@ -19,16 +20,19 @@ public class FinanceItem {
 
     public FinanceItem(){
         name = "null";
+        assigned = false;
         value = 0;
     }
 
-    public FinanceItem(String name, double value) {
+    public FinanceItem(String name, double value, boolean assigned) {
         this.name = name;
         this.value = value;
+        this.assigned = assigned;
     }
 
     public String getUsername(){return name;}
     public double getValue() {return value;}
+    public boolean getAssigned(){return assigned;}
 
     public void setAccount(Account account)
     {

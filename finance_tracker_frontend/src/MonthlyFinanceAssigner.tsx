@@ -15,6 +15,9 @@ import {
   toggleAddItemModal,
 } from "./store/items/actions";
 import AddItemModal from "./modals/AddItemModal";
+import axios from "axios";
+
+const headUrl: string = "http://localhost:8080";
 
 interface Item {
   id: string;
@@ -41,6 +44,7 @@ const DroppableContainer = styled.div((props: { isDraggingOver: boolean }) => ({
   borderRadius: 10,
 }));
 
+const badResponse = () => {};
 const DroppableZone = styled.div({
   borderBottomLeftRadius: 10,
   borderBottomRightRadius: 10,
@@ -48,6 +52,23 @@ const DroppableZone = styled.div({
 
 function getItems(assigned: boolean): Item[] {
   const items: Item[] = new Array();
+  const verifyUserUrl = `${headUrl}/item/get`;
+  axios
+    .get(`${verifyUserUrl}?username=${"ktrom"}`)
+    .then(function (response) {
+      if (response.data) {
+        items.concat(response.data);
+      } else {
+        badResponse();
+      }
+    })
+    .catch((e) => {
+      console.log(`ERROR received from ${verifyUserUrl}: ${e}\n`);
+      console.log(e.response);
+      console.log(e.request);
+      console.log(e.message);
+    });
+
   if (assigned) {
     items.push({ id: "0", name: "kyle", value: 200, assigned: true });
   } else {
@@ -183,6 +204,8 @@ function MonthlyFinanceAssigner(props: Props) {
         name: name,
         value: value,
       });
+      console.log(name);
+      console.log(value);
       return { unassigned: items, assigned: prevState.assigned };
     });
   };

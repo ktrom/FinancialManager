@@ -17,12 +17,11 @@ public class ItemController {
     @PostMapping(path="/add") // Map ONLY POST Requests
     public @ResponseBody
     String addNewItem (@RequestParam String username
-            , @RequestParam String name, @RequestParam double value) {
+            , @RequestParam String name, @RequestParam double value, @RequestParam boolean assigned) {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
 
-
-        FinanceItem f = new FinanceItem(name, value);
+        FinanceItem f = new FinanceItem(name, value, assigned);
         Account a = accountRepository.findAccountByUsername(username).get(0);
         f.setAccount(a);
         a.addItem(f);
@@ -31,7 +30,7 @@ public class ItemController {
     }
 
     @CrossOrigin
-    @PostMapping(path="/get") // Map ONLY POST Requests
+    @GetMapping(path="/get") // Map ONLY POST Requests
     public @ResponseBody
     Set<FinanceItem> getItems (@RequestParam String username) {
         Account a = accountRepository.findAccountByUsername(username).get(0);
