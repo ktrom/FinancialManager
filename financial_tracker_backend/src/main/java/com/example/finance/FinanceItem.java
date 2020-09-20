@@ -30,7 +30,7 @@ public class FinanceItem {
         this.assigned = assigned;
     }
 
-    public String getUsername(){return name;}
+    public String getName(){return name;}
     public double getValue() {return value;}
     public boolean getAssigned(){return assigned;}
 

@@ -16,6 +16,7 @@ import {
 } from "./store/items/actions";
 import AddItemModal from "./modals/AddItemModal";
 import axios from "axios";
+import { useParams } from "react-router";
 
 const headUrl: string = "http://localhost:8080";
 
@@ -49,34 +50,6 @@ const DroppableZone = styled.div({
   borderBottomLeftRadius: 10,
   borderBottomRightRadius: 10,
 });
-
-function getItems(assigned: boolean): Item[] {
-  const items: Item[] = new Array();
-  const verifyUserUrl = `${headUrl}/item/get`;
-  axios
-    .get(`${verifyUserUrl}?username=${"ktrom"}`)
-    .then(function (response) {
-      if (response.data) {
-        items.concat(response.data);
-      } else {
-        badResponse();
-      }
-    })
-    .catch((e) => {
-      console.log(`ERROR received from ${verifyUserUrl}: ${e}\n`);
-      console.log(e.response);
-      console.log(e.request);
-      console.log(e.message);
-    });
-
-  if (assigned) {
-    items.push({ id: "0", name: "kyle", value: 200, assigned: true });
-  } else {
-    items.push({ id: "1", name: "ronson", value: 800, assigned: false });
-  }
-
-  return items;
-}
 
 // a little function to help us with reordering the result
 function reorder(list: Item[], startIndex: number, endIndex: number): Item[] {
@@ -136,16 +109,61 @@ const getListStyle = (isDraggingOver: boolean) => ({
 function MonthlyFinanceAssigner(props: Props) {
   const [showModal, setShowModal] = React.useState<boolean>(false);
 
+  const yuut: { unassigned: Item[]; assigned: Item[] } = getItems();
+  const [state, setState] = React.useState<{
+    unassigned: Item[];
+    assigned: Item[];
+  }>(yuut);
+
   // const [newItem, setNewItem] = React.useState<{
   //   item_name: string;
   //   item_value: number;
   // }>({ item_name: "", item_value: 0 });
   //
 
-  const [state, setState] = React.useState<{
-    unassigned: Item[];
-    assigned: Item[];
-  }>({ unassigned: getItems(false), assigned: getItems(true) });
+  // React.useLayoutEffect(() => {
+  //   getItems();
+  // }, []);
+
+  function getItems() {
+    const unassignedItems: Item[] = new Array();
+    const assignedItems: Item[] = new Array();
+    const verifyUserUrl = `${headUrl}/item/get`;
+    axios
+      .get(`${verifyUserUrl}?username=${"ktrom"}`)
+      .then(function (response) {
+        if (response.data) {
+          const a: Array<{ name: string; value: number; assigned: boolean }> =
+            response.data;
+          a.map((item) => {
+            if (item.assigned) {
+              assignedItems.push({
+                id: item.name + item.value,
+                name: item.name,
+                value: item.value,
+                assigned: item.assigned,
+              });
+            } else {
+              unassignedItems.push({
+                id: item.name + item.value,
+                name: item.name,
+                value: item.value,
+                assigned: item.assigned,
+              });
+            }
+          });
+        } else {
+          badResponse();
+        }
+      })
+      .catch((e) => {
+        console.log(`ERROR received from ${verifyUserUrl}: ${e}\n`);
+        console.log(e.response);
+        console.log(e.request);
+        console.log(e.message);
+      });
+    return { unassigned: unassignedItems, assigned: assignedItems };
+  }
 
   /**
    * A semi-generic way to handle multiple lists. Matches
@@ -196,6 +214,21 @@ function MonthlyFinanceAssigner(props: Props) {
   };
 
   const addItem = (name: string, value: number) => {
+    const addUserUrl = `${headUrl}/item/add`;
+
+    axios
+      .post(
+        `${addUserUrl}?username=${"ktrom"}&name=${name}&value=${value}&assigned=${false}`
+      )
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch((e) => {
+        console.log(`ERROR received from ${addUserUrl}: ${e}\n`);
+        console.log(e.response);
+        console.log(e.request);
+        console.log(e.message);
+      });
     setState(function (prevState) {
       const items = prevState.unassigned;
       items.push({
